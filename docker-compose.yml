@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  apiserver:
+    build:
+      context: . # Use an image built from the specified dockerfile in the current directory.
+      dockerfile: Dockerfile
+    # ports:
+      # - "5000:5000" # Forward the exposed port 5000 on the container to port 5000 on the host machine
+    restart: always
+    # network_mode: "host"
+    # Connects the API to a common api.network bridge
+    networks: 
+      - "backend"
+
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "20"
+        max-size: "50m"
+
+  # nginx container
+  nginx:
+      # specifies the latest nginx image
+      image: nginx:latest
+      # Connects the conf file of the container to the conf file in our folder
+      volumes:
+        - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # It will start up the nginx only when all api containers have started
+      depends_on: 
+        - apiserver
+      # Connects the port 80 of the nginx container to localhost:80 or localhost
+      ports: 
+        - "80:80"
+      networks: 
+        - "backend"
+networks: 
+    backend:
