@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kusalt-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      name: kusalt
+  template:
+    metadata:
+      labels:
+        name: kusalt
+    spec:
+      containers:
+      - name: application
+        image: edward8628/kusalt
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 5000
